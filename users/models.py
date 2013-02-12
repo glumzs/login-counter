@@ -1,4 +1,5 @@
 from django.db import models
+import os
 
 SUCCESS               =   1  # : a success
 ERR_BAD_CREDENTIALS   =  -1  # : (for login only) cannot find the user/password pair in the database
@@ -39,4 +40,4 @@ class UsersModel(models.Model):
 		u = UsersModel.objects.all()
 		u.delete()
 		return 1
-
+	
