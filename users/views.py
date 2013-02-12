@@ -57,69 +57,28 @@ def resetFixture(request):
 		return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 		
 def unitTests(request):
-	result = {"output":"1", "totalTests": 10, "nrFailed": 0}
 	if request.method == "POST":
-		(ofile, ofileName) = tempfile.mkstemp(prefix="userCounter")
-		try:
-			errMsg = ""  
-			output = ""     # Some default values
-			totalTests = 0
-			nrFailed   = 0
-			while True:  # Give us a way to break
-				# Find the path to the server installation
-				thisDir = os.path.dirname(os.path.abspath(__file__))
-				print ofileName
-				cmd = "python manage.py test users >" + ofileName + " 2>&1 "
-				print "Executing "+cmd
-				#code = os.system(cmd)
-				#time.sleep(3)
-				#code = subprocess.call(cmd,shell=True)
-				(output, err) = Popen(cmd,  stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, shell=True).communicate(None)
-				code = 0
-				if code != 0:
-					# There was some error running the tests.
-					# This happens even if we just have some failing tests
-					errMsg = "Error running command (code="+str(code)+"): "+cmd+"\n"
-					# Continue to get the output, and to parse it
+		errMsg = ""  
+		output = ""     # Some default values
+		totalTests = 0
+		nrFailed   = 0
+		cmd = "python manage.py test users"
+		print "Executing "+cmd
+		output = subprocess.check_output("python manage.py test users", shell=True,stderr=subprocess.STDOUT)
 
-				# Now get the output
-				try:
-					ofileFile = open(ofileName, "r")
-					output = ofileFile.read()
-					ofileFile.close()
-				except:
-					errMsg += "Error reading the output "+traceback.format_exc()
-					# No point in continuing
-					break
-
-				print "Got "+output + " ouch"
-				# Python unittest prints a line like the following line at the end
-				# Ran 4 tests in 0.001s
-				m = re.search(r'Ran (\d+) tests', output)
-				if not m:
-					errMsg += "Cannot extract the number of tests\n"
-					break
-				totalTests = int(m.group(1))
-				# If there are failures, we will see a line like the following
-				# FAILED (failures=1)
-				m = re.search('rFAILED.*\(failures=(\d+)\)', output)
-				if m:
-					nrFailures = int(m.group(1))
-					break # Exit while
-
-			# End while
-			result = { 'output' : errMsg + output,
+		print output
+		m = re.search(r'Ran (\d+) tests', output)
+		if not m:
+			errMsg += "Cannot extract the number of tests\n"
+		
+		totalTests = int(m.group(1))
+		# If there are failures, we will see a line like the following
+		# FAILED (failures=1)
+		m = re.search('rFAILED.*\(failures=(\d+)\)', output)
+		if m:
+			nrFailures = int(m.group(1))
+		result = { 'output' : errMsg + output,
 						'totalTests' : totalTests,
 						'nrFailed' : nrFailed }
 
-			return HttpResponse(simplejson.dumps(result), mimetype='application/json')               
-		finally:
-			print "hmm"
-			#os.unlink(ofileName)
-		#cmd = "python manage.py test users >" + ofileName + "2>&1 &"
-		#os.system(cmd)
-		#script(cmd)
-		#r = subprocess.call(cmd,Shell=True)
-		return HttpResponse(simplejson.dumps(result), mimetype='application/json')
-	else:
-		return HttpResponse("Hello, world.")
+		return HttpResponse(simplejson.dumps(result), mimetype='application/json')    
