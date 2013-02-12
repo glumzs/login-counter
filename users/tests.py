@@ -7,6 +7,9 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 from users.models import UsersModel
+import os
+
+os.environ['DJANGO_SETTINGS_MODULE'] = "mysite.settings"
 
 SUCCESS               =   1  # : a success
 ERR_BAD_CREDENTIALS   =  -1  # : (for login only) cannot find the user/password pair in the database
