@@ -23,13 +23,13 @@ def login(request):
 	if request.method == "POST":
 		req = simplejson.loads(request.raw_post_data)
 		u = UsersModel()
-		ret = u.login(req['user'],req['password'])
+		ret = u.login(req['user'],req['password']) 
 		if ret < 0:
 			response_data = {"errCode": ret}
 		else:
-			response_data = {"errCode" : SUCCESS, "count" : ret}
+			response_data = {"errCode" : 1, "count" : ret}
 	
-		return HttpResponse(json.dumps(response_data), content_type="application/json")
+		return HttpResponse(simplejson.dumps(response_data), content_type="application/json")
 	
 def add(request):
 	if request.method == "POST":
