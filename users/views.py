@@ -42,7 +42,10 @@ def add(request):
 			count = ret
 		else:
 			errCode = ret
-		result = {"errCode": errCode, "count": count}
+		if count > 0:
+			result = {"errCode": errCode, "count": count}
+		else:
+			result = {"errCode": errCode}
 		return HttpResponse(simplejson.dumps(result), mimetype='application/json')
 	
 def resetFixture(request):

@@ -12,10 +12,8 @@ class UsersModel(models.Model):
 	password = models.CharField(max_length=128)
 	count = models.IntegerField()
 	def login(self, user, password):
-		print "GOT LOGIN: " + user + "/" + password
 		try:
 			res = UsersModel.objects.get(user=user,password=password)
-			print "SUCCESS!@@@@ " + str(res.count)
 		except UsersModel.DoesNotExist:
 			res = None
 		if res:
