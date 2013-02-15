@@ -18,9 +18,21 @@ class TestAdd(testLib.RestTestCase):
 
 		respData = self.makeRequest("/users/add", method="POST", data = { 'user' : 'user1', 'password' : 'password2'} )
 		self.assertResponse(respData, errCode = -2)
+		
 	def testAddEmptyLogin(self):
 		respData = self.makeRequest("/users/add", method="POST", data = { 'user' : '', 'password' : 'password'} )
 		self.assertResponse(respData, errCode = -3)
+	def testAddEmptyPassword(self):
+		respData = self.makeRequest("/users/add", method="POST", data = { 'user' : 'user1', 'password' : ''} )
+		self.assertResponse(respData, count = 1)
+	def testAddLongLogin(self):
+		uname= "a"*129
+		respData = self.makeRequest("/users/add", method="POST", data = { 'user' : uname, 'password' : 'password'} )
+		self.assertResponse(respData, errCode = -3)
+	def testAddLongPassword(self):
+		password = "a"*129
+		respData = self.makeRequest("/users/add", method="POST", data = { 'user' : 'user2', 'password' : password} )
+		self.assertResponse(respData, errCode = -4)
 
 
 class TestLogin(testLib.RestTestCase):
