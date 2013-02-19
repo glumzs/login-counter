@@ -1,0 +1,92 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Django the Counter</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="counter.js"></script>
+	<script language="JavaScript">
+	function welcome(user, count) {
+   		jQuery('#credentials_box').hide();
+   		jQuery('#welcome_box').show();
+   		jQuery('#welcome_box').html("Welcome "+user+"<br>You have logged in "+count+" times.");
+	}
+	function show_error(msg) {
+		jQuery("#msg_box").html(msg);
+	}
+	function do_login(data, user) {
+  		if( data.errCode > 0 ) {
+     		c = data.count;
+     		welcome(user, c);
+     		jQuery("#msg_box").html("");
+     		jQuery("#logout_btn").show();
+  		} else 
+     		show_error( get_errmsg(data.errCode) );  
+	}
+
+	function do_add(data, user) {
+  		if( data.errCode > 0 ) {
+     		c = data.count;
+     		welcome(user, c);
+     		jQuery('#logout_btn').show();
+     		jQuery('#msg_box').hide();
+  		} else 
+  			show_error( get_errmsg(data.errCode) );
+	}
+	$(document).ready(function() {
+   		jQuery('#welcome_box').hide();
+   		jQuery('#logout_btn').hide();
+   		$('#adduser_btn').click(function() {
+			username = $('#username').val();
+			password = $('#password').val();
+   			json_request("/users/add", { user: username, password: password }, function(data) { return do_add(data, username); }, function(err) {alert('error occurred on request'); });
+
+   			return false;
+		});
+		$('#login_btn').click(function(){
+			username = $('#username').val();
+   			password = $('#password').val();
+   			json_request("/users/login", { user: username, password: password }, function(data) { return do_login(data, username); }, function(err) { alert('error occurred on request'); });
+
+   			return false;
+		});
+		$('#logout_btn').click(function(){
+			location.reload();
+		});
+ 	});
+	</script>
+</head>
+<body>
+    <div id="login_bg">
+    <img src="img/jango.jpg"" height="600px">
+    </div>
+<div id="main" style="position: absolute; top: 20px; left: 200px;">        
+<div class="container">
+ 
+    <div class="row"><div class="span3">&nbsp;</div>
+    <div class="span5">
+    <div class="hero-unit">
+    <form class="form-horizontal">
+        <h4 id="msg_box">Please enter your credentials below</h4>
+        <div id="welcome_box"></div>
+        <button type="button" class="btn btn-danger" id="logout_btn">Logout</button>
+        <div id="credentials_box">
+        <input type="text" id="username" placeholder="Username"><br><br>
+        <input type="password" id="password" placeholder="Password"><br><br>
+        <button type="button" class="btn btn-primary" id="login_btn">Login</button>&nbsp;&nbsp;<button type="button" class="btn btn-success" id="adduser_btn">Add user</button>
+        </div>
+    </form>
+    </div>
+    </div>
+    
+
+
+</div>
+</div>
+</div>
+</body>
+</html>
+

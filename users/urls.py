@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from users import views
 
 urlpatterns = patterns('',
@@ -8,4 +8,8 @@ urlpatterns = patterns('',
     url(r'^add$', views.add, name='add'),
     url(r'^resetFixture$', views.resetFixture, name='resetFixture'),
     url(r'^unitTests$', views.unitTests, name='unitTests')
+    
 )
+
+urlpatterns += staticfiles_urlpatterns()
+
